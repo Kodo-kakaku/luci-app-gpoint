@@ -22,6 +22,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 
 ## Supported devices
 - Quectel EC25/EP06/EM12/RM500Q
+- Sierra EM7455/EM7565
 
 ## Supported GNSS protocols
 - [OsmAnd](https://www.traccar.org/osmand/)
