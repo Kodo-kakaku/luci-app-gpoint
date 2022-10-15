@@ -25,6 +25,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 - Sierra EM7455/EM7565
 - U-Blox VK-172 GPS/GLONASS module (u-blox 7 GNSS modules)
 
+
 ## Supported GNSS protocols
 - [OsmAnd](https://www.traccar.org/osmand/)
 - [Wialon IPS](https://gurtam.com/ru/gps-hardware/soft/wialon-ips)
