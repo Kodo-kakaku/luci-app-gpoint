@@ -40,6 +40,8 @@ if not modemStatus[1] then
 		modemVendor = require("que")
 	elseif string.find(modemConfig.name, "Sierra") then
 		modemVendor = require("sierra")
+	elseif string.find(modemConfig.name, "U-Blox") then
+		modemVendor = require("ublox")
 	end
 end
 --------------------------------------------------------------------------------
