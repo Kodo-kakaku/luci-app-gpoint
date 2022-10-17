@@ -34,7 +34,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 - Upload ipk file to tmp folder
 - cd /tmp
 - opkg update
-- opkg install luci-app-gpoint_1.5.0_all.ipk
+- opkg install luci-app-gpoint_1.6.0_all.ipk
 
 ## Uninstall
 - opkg remove luci-app-gpoint
