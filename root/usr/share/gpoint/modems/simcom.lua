@@ -13,6 +13,8 @@ local SIMCOM_END_GPS    = "AT+CGPS=0,1"
 
 -- automatic activation of the NMEA port for data transmission
 function simcom.start(port)
+	local p = tonumber(string.sub(port, #port)) + 1
+	p = string.gsub(port, '%d', tostring(p))
 	local error, resp = true, {
 		warning = {
 			app = {true, "Port is unavailable. Check the modem connections!"},
@@ -39,4 +41,4 @@ function simcom.getGNSSdata(port)
 	return nmea.getAllData(port)
 end
 
-return simcom	
+return simcom
