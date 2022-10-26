@@ -13,6 +13,8 @@ local SIMCOM_END_GPS    = "AT+CGPS=0,1"
 
 -- automatic activation of the NMEA port for data transmission
 function simcom.start(port)
+	local p = tonumber(string.sub(port, #port)) + 1
+	p = string.gsub(port, '%d', tostring(p))
 	local error, resp = true, {
 		warning = {
 			app = {true, "Port is unavailable. Check the modem connections!"},
@@ -23,8 +25,8 @@ function simcom.start(port)
 	-- SIM7600 series default NMEA /dev/ttyUSB1
 	local fport = nixio.glob("/dev/tty[A-Z][A-Z]*")
 	for name in fport do
-		if string.find(name, port) then
-			error, resp = serial.write(port, SIMCOM_BEGIN_GPS)
+		if string.find(name, p) then
+			error, resp = serial.write(p, SIMCOM_BEGIN_GPS)
 		end
 	end
 	return error, resp
