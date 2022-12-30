@@ -21,8 +21,10 @@ It doesn't matter if you use a router in transport or it is installed in your te
 - Support [OpenLayers](https://openlayers.org/) maps in UI, and much more!
 
 ## Supported devices
+- Dell DW5821e/DW5829e
 - Quectel EC25/EP06/EM12/RM500Q
 - Sierra EM7455/EM7565
+- Simcom SIM7600E-H
 - U-Blox VK-172 GPS/GLONASS module (u-blox 7 GNSS modules)
 
 
@@ -34,7 +36,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 - Upload ipk file to tmp folder
 - cd /tmp
 - opkg update
-- opkg install luci-app-gpoint_1.5.0_all.ipk
+- opkg install luci-app-gpoint_1.8.5_all.ipk
 
 ## Uninstall
 - opkg remove luci-app-gpoint

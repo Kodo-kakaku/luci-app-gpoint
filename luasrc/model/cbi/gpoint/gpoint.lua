@@ -40,7 +40,15 @@ local modems = {
 	},
 	["U-Blox"] = {
 		["1546:01a7"] = "VK-172"
+	},
+	["Simcom"] = {
+		["1e0e:9001"] = "SIM7600E-H"
+	},
+	["Dell"] = {
+		["413c:81d7"] = "DW5821e",
+		["413c:81e6"] = "DW5829e"
 	}
+
 }
 
 local m = Map("gpoint", translate(""))
