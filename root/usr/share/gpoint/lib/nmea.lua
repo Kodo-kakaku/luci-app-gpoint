@@ -2,7 +2,7 @@
 -- This module is designed to extract data from NMEA messages. 
 -- All data is combined into a table "GnssData".
 -------------------------------------------------------------
--- Copyright 2021-2022 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local uci = require("luci.model.uci")
@@ -33,9 +33,13 @@ local function createGnssForm()
 end
 
 --Converting coordinates from the NMEA protocol to degrees
-local function nmeaCoordinatesToDouble(coord)
+local function nmeaCoordinatesToDouble(coord, quadrant)
 	local deg = math.floor(coord / 100)
-	return deg + (coord - 100 * deg) / 60
+	local coord_deg = deg + (coord - 100 * deg) / 60
+	if quadrant == 'W' or quadrant == 'S' then
+		return  coord_deg * -1
+	end
+	return coord_deg
 end
 
 --We are looking for the desired data line in the line received from the device
@@ -132,7 +136,7 @@ local function getGGA(GnssData, resp)
 	GnssData.gga = {
 		"utc",       -- UTC of this position report, hh is hours, mm is minutes, ss.ss is seconds.
 		"latitude",  -- Latitude, dd is degrees, mm.mm is minutes
-		"ne", 		 -- N or S (North or South)
+		"ns", 		 -- N or S (North or South)
 		"longitude", -- Longitude, dd is degrees, mm.mm is minutes
 		"ew",        -- E or W (East or West)
 		"qual",      -- GPS Quality Indicator (non null)
@@ -248,7 +252,7 @@ local function getGNS(GnssData, resp)
 	GnssData.gns = {
 		"utc",       -- UTC of this position report, hh is hours, mm is minutes, ss.ss is seconds.
 		"latitude",  -- Latitude, dd is degrees, mm.mm is minutes
-		"ne", 		 -- N or S (North or South)
+		"ns", 		 -- N or S (North or South)
 		"longitude", -- Longitude, dd is degrees, mm.mm is minutes
 		"ew",        -- E or W (East or West)
 		"mi",        -- Mode indicator (non-null)
@@ -298,8 +302,8 @@ local function getGPoint(GnssData, resp)
 	end
 
 	if GpsOrGlonas then
-		GnssData.gp.latitude   = string.format("%0.6f", nmeaCoordinatesToDouble(GpsOrGlonas.latitude))
-		GnssData.gp.longitude  = string.format("%0.6f", nmeaCoordinatesToDouble(GpsOrGlonas.longitude))
+		GnssData.gp.latitude   = string.format("%0.6f", nmeaCoordinatesToDouble(GpsOrGlonas.latitude, GpsOrGlonas.ns))
+		GnssData.gp.longitude  = string.format("%0.6f", nmeaCoordinatesToDouble(GpsOrGlonas.longitude, GpsOrGlonas.ew))
 		GnssData.gp.altitude   = GpsOrGlonas.alt
 		GnssData.gp.nsat       = GpsOrGlonas.sat
 		GnssData.gp.hdop       = GpsOrGlonas.hdp
@@ -313,7 +317,7 @@ local function getGPoint(GnssData, resp)
 	end
 
 	if not GnssData.warning.rmc[1] then
-		local unixTime = findTimeZone(GnssData.rmc.utc, GnssData.rmc.date, nmeaCoordinatesToDouble(GnssData.rmc.longitude))
+		local unixTime = findTimeZone(GnssData.rmc.utc, GnssData.rmc.date, nmeaCoordinatesToDouble(GnssData.rmc.longitude, GnssData.rmc.ew))
 		local dateTime = os.date("*t", unixTime)
 
 		GnssData.gp.utc  = string.format("%s:%s", addZero(dateTime.hour), addZero(dateTime.min))
