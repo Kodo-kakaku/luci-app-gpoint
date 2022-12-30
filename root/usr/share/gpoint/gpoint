@@ -2,7 +2,7 @@
 -------------------------------------------------------------
 -- luci-app-gpoint. Gnss information dashboard for 3G/LTE dongle.
 -------------------------------------------------------------
--- Copyright 2021-2022 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 common_path   = "/usr/share/gpoint/modems/?.lua;/usr/share/gpoint/lib/?.lua;/usr/share/gpoint/proto/?.lua;/usr/share/gpoint/lib/kalman_filter/?.lua;"
@@ -42,9 +42,9 @@ if not modemStatus[1] then
 		modemVendor = require("sierra")
 	elseif string.find(modemConfig.name, "U-Blox") then
 		modemVendor = require("ublox")
-	elseif  string.find(modemConfig.name, "Simcom") then
+	elseif string.find(modemConfig.name, "Simcom") then
 		modemVendor = require("simcom")
-	elseif  string.find(modemConfig.name, "Dell") then
+	elseif string.find(modemConfig.name, "Dell") then
 		modemVendor = require("dell")
 	end
 end
