@@ -1,9 +1,9 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=GNSS Information dashboard for 3G/LTE dongle
-LUCI_DEPENDS:=+lua +curl +lua-rs232 +luasocket +iwinfo +libiwinfo-lua +lua-bit32
+LUCI_DEPENDS:=+lua +curl +lua-rs232 +luasocket +iwinfo +libiwinfo-lua +lua-bit32 +usbutils
 PKG_LICENSE:=GPLv3
-PKG_VERSION:=1.8.5
+PKG_VERSION:=1.8.6
 
 define Package/luci-app-gpoint/conffiles
 	/etc/config/gpoint
