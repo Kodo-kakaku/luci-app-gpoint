@@ -16,15 +16,16 @@ local nmea = {}
 local function createGnssForm()
 	local GnssForm = {
 		warning = {
-			app     = {true, ""},
-			gga     = {true, ""},
-			rmc     = {true, ""},
-			vtg     = {true, ""},
-			gsa     = {true, ""},
-			gp 	    = {true, ""},
-			gns     = {true, ""},
-			server  = {true, ""},
-			locator = {true, ""}
+			app      = {true, ""},
+			gga      = {true, ""},
+			rmc      = {true, ""},
+			vtg      = {true, ""},
+			gsa      = {true, ""},
+			gp 	     = {true, ""},
+			gns      = {true, ""},
+			server   = {true, ""},
+			locator  = {true, ""},
+			geofence = {true, ""}
 		},
 		gp  = { longitude = "-", latitude = "-"},
 		gga = { longitude = "-", latitude = "-"}
