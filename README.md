@@ -17,6 +17,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 - GeoHash (reduces drift of GPS\GLONASS coordinate readings in parking)
 - [Kalman filter](https://github.com/lacker/ikalman) (Implementation of Kalman filter for geo (gps) tracks. This is a Lua port of original C code)
 - Yandex Locator [API](https://yandex.ru/dev/locator/) (Determines location by nearest Wi-Fi access points)
+- Simple [GeoFence](https://en.wikipedia.org/wiki/Geo-fence) a virtual perimeter for a real-world geographic area
 - Server side (sends GNSS data to a remote server)
 - Support [OpenLayers](https://openlayers.org/) maps in UI, and much more!
 
