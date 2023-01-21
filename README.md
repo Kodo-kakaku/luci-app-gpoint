@@ -1,9 +1,6 @@
 <h2 align="center">
  <img src="https://github.com/Kodo-kakaku/luci-app-gpoint/blob/main/Images/logo.png" alt="Gpoint" height="200" width="370">
   <br>Global Navigation Satellite System for OpenWrt LuCi<br>
- 
- ![GitHub All Releases](https://img.shields.io/github/downloads/Kodo-kakaku/luci-app-gpoint/total)
- 
 </h2>
 
 <p align="center">Gpoint was created in order to use full set of functions of mobile modules installed in OpenWRT router.
