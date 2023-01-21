@@ -27,7 +27,7 @@ local timezone = {
 	{ 'Etc/GMT-6',                '-6' },{ 'Etc/GMT-7',  '-7' },{ 'Etc/GMT-8',  '-8' },{ 'Etc/GMT-9',  '-9' }
 }
 
-local modems = { 
+local modems = {
 	["Quectel"] = {
 		["2c7c:0306"] = "EP06",
 		["2c7c:0512"] = "EM12",
@@ -152,8 +152,8 @@ o = s:option(Value, "server_password", translate("Password:"), translate("If you
 o.password = true
 o.placeholder = "Device password"
 
-o = s:option(Flag, "blackbox_enable", translate("BlackBox enable:"), 
-						translate("Blackbox makes it possible to record and store data even in the absence of a cellular signal"))
+o = s:option(Flag, "blackbox_enable", translate("BlackBox enable:"),
+		translate("Blackbox makes it possible to record and store data even in the absence of a cellular signal"))
 o:depends("proto","wialon")
 
 o = s:option(Flag, "blackbox_cycle", translate("BlackBox cycle:"), translate("Cyclic overwriting of data stored in the BlackBox"))
@@ -174,7 +174,7 @@ o:depends("proto", "wialon")
 function o.write(self, section)
 	local file = io.open("/usr/share/gpoint/tmp/blackbox.json", 'w')
 	file:write(json.stringify({["size"]=0,["max"]=1000,["data"]={}}))
-    file:close()
+	file:close()
 end
 
 
@@ -190,10 +190,11 @@ s:tab("ya", translate("Yandex Locator"), translate("Determines the location of t
 													cellular base stations — without using satellite navigation systems."))
 s:tab("gpoint_filter", translate("GeoHash Filter"), translate("Filters \"DRIFT\" and \"JUMPS\" of navigation 3G/LTE dongles"))
 s:tab("kalman", translate("Kalman Filter"), translate("Designed to make the route smoother. Removes \"jumps\" of navigation 3G/LTE dongles"))
+s:tab("geofence", translate("Geofence"), translate("Getting information about the entry or exit of the router from the selected zone"))
 
 ----------------------------------------------------------------------------------------------------------------
 
--- API Yandex locator 
+-- API Yandex locator
 o = s:taboption("ya", Flag, "ya_enable", translate("Enable:"), translate("Enabling the Yandex locator"))
 o.optional = true
 
@@ -214,10 +215,10 @@ o.password = true
 o.placeholder = "Yandex API key"
 
 o = s:taboption("ya", DummyValue, "ya_href")
-	function o.cfgvalue(self, section)
-		local h = "<a href=\"https://yandex.ru/dev/locator/keys/get/\">Get Yandex API key</a>"
-		return translate(h)
-	end
+function o.cfgvalue(self, section)
+	local h = "<a href=\"https://yandex.ru/dev/locator/keys/get/\">Get Yandex API key</a>"
+	return translate(h)
+end
 o.rawhtml = true
 
 -- GeoHash
@@ -248,5 +249,28 @@ o = s:taboption("kalman", Value, "kalman_noise", translate("Noise:"), translate(
 o.placeholder = ""
 o.datatype    = "range(1.0, 30.0)"
 
+-- Geofencing
+o = s:taboption("geofence", Flag, "geofence_enable", translate("Enable:"), translate("Enabling geofencing"))
+o.optional = true
+o = s:taboption("geofence", Value, "geofence_latitude", translate("Latitude:"))
+o.placeholder = "in degrees"
+o = s:taboption("geofence", Value, "geofence_longitude", translate("Longitude:"), translate("Longitude and Latitude can be obtained from \"Overview\""))
+o.placeholder = "in degrees"
+o = s:taboption("geofence", ListValue, "geofence_area", translate("Area:"), translate("Range of the geofence"))
+o.default = 7
+o:value(5, "~4890 m")
+o:value(6, "~1220 m")
+o:value(7, "~153 m")
+o:value(8, "~38 m")
+o = s:taboption("geofence", Flag, "geofence_script", translate("Enable script:"),
+		translate("Execute the script in case of hitting or exiting the router from the geofence"))
+o.optional = true
+o = s:taboption("geofence", Value, "geofence_script_path", translate("Script PATH:"))
+o.placeholder = ""
+o = s:taboption("geofence", ListValue, "geofence_script_when", translate("When:"), translate("In which case to execute the script"))
+o.default = 1
+o:value("All", "All")
+o:value("Leaving", "Leaving")
+o:value("Coming", "Coming")
 
 return m
