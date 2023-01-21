@@ -24,7 +24,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 
 ## Supported devices
 - Dell DW5821e/DW5829e
-- Quectel EC25/EP06/EM12/RM500Q
+- Quectel EC25/EP06/EM12/RM500Q 
 - Sierra EM7455/EM7565
 - Simcom SIM7600E-H
 - U-Blox VK-172 GPS/GLONASS module (u-blox 7 GNSS modules)
