@@ -2,6 +2,7 @@
  <img src="https://github.com/Kodo-kakaku/luci-app-gpoint/blob/main/Images/logo.png" alt="Gpoint" height="200" width="370">
   <br>Global Navigation Satellite System for OpenWrt LuCi<br>
 </h2>
+![GitHub All Releases](https://img.shields.io/github/downloads/Kodo-kakaku/luci-app-gpoint/total)
 <p align="center">Gpoint was created in order to use full set of functions of mobile modules installed in OpenWRT router.
 Manufacturers of GSM/3G/LTE modems often lay down GNSS function, so why not use it?
 It doesn't matter if you use a router in transport or it is installed in your terminal, you can always find out its location!</p>
