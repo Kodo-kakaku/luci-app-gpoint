@@ -272,5 +272,4 @@ o.default = 1
 o:value("All", "All")
 o:value("Leaving", "Leaving")
 o:value("Coming", "Coming")
-
 return m
