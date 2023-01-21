@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 -- Module is used for point configuration and interaction with the UI
 -------------------------------------------------------------------
--- Copyright 2021-2022 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local uci  = require("luci.model.uci")
@@ -210,6 +210,42 @@ function config.getKalmanData()
 	end	
 	
 	return err, filter
+end
+
+-----------------------------------------------------------------------------------
+-- Geofence
+	-- 1. Checking for the Geofence library
+	-- 2. Check Geofence service enable/disable
+	-- 3. Make the settings, if there are none, then we apply the default settings
+-----------------------------------------------------------------------------------
+function config.getGeofenceData()
+
+	local err = {}
+	local geofence = {
+		enable  = false,
+		latitude = 0.0,
+		longitude = 0.0,
+		area = 153,
+		script = false,
+		path = "",
+		when = "All"
+	}
+
+    if not CFG.service_settings.geofence_enable then
+    	err = STATUS.FILTER.SERVICE_OFF
+    else
+    	err = STATUS.FILTER.SERVICE_ON
+    	geofence.enable = true
+    	geofence.latitude = tonumber(CFG.service_settings.geofence_latitude or -77.955806)
+    	geofence.longitude = tonumber(CFG.service_settings.geofence_longitude or 69.582992)
+    	geofence.area = tonumber(CFG.service_settings.geofence_area)
+    	if CFG.service_settings.geofence_script then
+    		geofence.script = CFG.service_settings.geofence_script == '1' and true or false
+    		geofence.path = CFG.service_settings.geofence_script_path
+    		geofence.when = CFG.service_settings.geofence_script_when
+    	end
+    end
+	return err, geofence
 end
 
 -----------------------------------------------------------------------------------

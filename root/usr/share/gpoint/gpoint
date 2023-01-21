@@ -104,6 +104,22 @@ else
 	kalman,kalmanFilter,kalmanIsStop,secondsSinceLastUpdate = nil, nil, nil, nil
 end
 --------------------------------------------------------------------------------
+-- Geofence
+--------------------------------------------------------------------------------
+local geofence = ""
+local zone = {
+	hash = "",
+	definition = false,
+	status = false
+};
+local geofenceStatus, geofenceConfig = config.getGeofenceData()
+if not geofenceStatus[1] then
+	geofence = require("geofence")
+	zone.hash = geofence.encode(geofenceConfig.latitude, geofenceConfig.longitude, geofenceConfig.area)
+else
+	geofence, zone = nil, nil
+end
+--------------------------------------------------------------------------------
 -- Config Ubus
 --------------------------------------------------------------------------------
 local serviceIsStart = {warning={app={true,"Service start"},locator={true,"Loading..."},server={true,"Loading..."}}}
@@ -124,6 +140,7 @@ local timeToUpdateGNSSdata = 3
 
 while true do
 	-- modem GNSS data
+	local optionalParams = {}
 	local portStatus, GnssData = portActive(modemConfig.port)
 	if portStatus then
 		GnssData = modemVendor.getGNSSdata(modemConfig.port)
@@ -135,8 +152,9 @@ while true do
 	-- yandex locator
 	GnssData.warning.locator = locatorStatus
 	if portStatus and not locatorStatus[1] then
+		local server_locator_status = "pause"
 		if GnssData.gp.longitude == "-" and GnssData.gp.latitude == "-" then
-			if locatorGPSmiss >= 3 then 
+			if locatorGPSmiss >= 3 then
 				local err, latitude, longitude = locator.getLocation(locatorConfig.iface, locatorConfig.key)
 				GnssData.warning.locator = err[1] and err or {false, "Data received from locator..."}
 				if not GnssData.warning.locator[1] then
@@ -146,6 +164,7 @@ while true do
 					GnssData.gp.utc		   = os.date("%H:%M", os.time(os.date("!*t"))) -- TODO time + UTF(+3)
 					GnssData.gga.latitude  = locator.degreesToNmea(latitude)
 					GnssData.gga.longitude = locator.degreesToNmea(longitude)
+					server_locator_status = "run"
 				end
 			else
 				GnssData.warning.locator = {true, "getting navigation data..."}
@@ -154,16 +173,18 @@ while true do
 		else
 			locatorGPSmiss = 0
 		end
+		table.insert(optionalParams, {"locator", '3', server_locator_status})
 	end
 
 	-- drift GpointFilter
 	GnssData.warning.filter = filterStatus
 	if portStatus and not GnssData.warning.filter[1] then
+		local server_geohash_status = "pause"
 		if not GnssData.warning.gga[1] or not GnssData.warning.gns[1] and GnssData.warning.locator[2] == "OK" then
 			if GnssData.gp.spkm ~= '-' and tonumber(GnssData.gp.spkm) < filterConfig.speed then
 
 				local tmpHash = FilterGNSS.encode(GnssData.gp.latitude, GnssData.gp.longitude, filterConfig.hash)
-				
+				server_geohash_status = "run"
 				if not FilterGNSSdata.empty and tmpHash == FilterGNSSdata.coordHash and FilterGNSSdata.changesSize < filterConfig.changes then
 					FilterGNSSdata.changesSize = 0
 					GnssData.gp.latitude, GnssData.gp.longitude   = FilterGNSSdata.gp.latitude, FilterGNSSdata.gp.longitude
@@ -186,13 +207,37 @@ while true do
 				FilterGNSSdata.changesSize, FilterGNSSdata.empty = 0, true
 			end
 		end
+		table.insert(optionalParams, {"geohash", '3', server_geohash_status})
 	end
 
+	-- GeoFence
+	GnssData.warning.geofence = geofenceStatus
+	if portStatus and not GnssData.warning.geofence[1] then
+		GnssData.geofence = {
+			area = geofenceConfig.area,
+			latitude  = tostring(geofenceConfig.latitude),
+			longitude = tostring(geofenceConfig.longitude),
+			inzone = false
+		}
+		if not GnssData.warning.gga[1] or
+					not GnssData.warning.gns[1] or
+							GnssData.warning.locator[2] == "Data received from locator..." then
+			GnssData.geofence.inzone = geofence.equal(GnssData, geofenceConfig.area, zone.hash)
+			if geofenceConfig.script and geofenceConfig.definition then
+				geofence.script(GnssData.geofence.inzone, zone.status, geofenceConfig.when)
+			else
+				geofenceConfig.definition = true
+			end
+			zone.status = GnssData.geofence.inzone
+		end
+		table.insert(optionalParams, {"geofence", '3', GnssData.geofence.inzone and "in" or "out"})
+	end
 
 	-- KalmanFilter
 	-- TODO enabling and disabling in parking lot
 	GnssData.warning.kalman = kalmanStatus
 	if portStatus and not GnssData.warning.kalman[1] then
+		local server_kalman_status = "pause"
 		if not GnssData.warning.gga[1] or not GnssData.warning.gns[1] and GnssData.warning.locator[2] == "OK" then
 			if kalmanIsStop then
 				kalman = kalmanFilter.create_velocity2d(kalmanConfig.noise)
@@ -202,18 +247,20 @@ while true do
 			GnssData.gp.latitude,  GnssData.gp.longitude  = kalmanFilter.get_lat_lon(kalman)
 			GnssData.gga.latitude, GnssData.gga.longitude = locator.degreesToNmea(GnssData.gp.latitude), ('0' .. locator.degreesToNmea(GnssData.gp.longitude))
 			GnssData.gns.latitude, GnssData.gns.longitude = GnssData.gga.latitude, GnssData.gga.longitude
+			server_kalman_status = "run"
 		else
 			kalmanIsStop = true
 		end
+		table.insert(optionalParams, {"kalman", '3', server_kalman_status})
 	end
-	
+
 	-- remote server
 	-- Filter locator to access send data to server
 	GnssData.warning.server = serverStatus
 	if locatorGPSmiss == 0 or locatorGPSmiss >= 3 then
 		if portStatus and not serverStatus[1] and os.time() >= frequencyDataSend then
 			frequencyDataSend = os.time() + (serverConfig.frequency - timeToUpdateGNSSdata)
-			GnssData.warning.server = gnssProtocol.sendData(GnssData, serverConfig)
+			GnssData.warning.server = gnssProtocol.sendData(GnssData, serverConfig, optionalParams)
 		end
 	end
 
