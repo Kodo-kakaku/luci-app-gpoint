@@ -1,7 +1,7 @@
 -------------------------------------------------------------
 -- luci-app-gpoint. Gnss information dashboard for 3G/LTE dongle.
 -------------------------------------------------------------
--- Copyright 2021-2022 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local fs   = require("nixio.fs")
@@ -54,7 +54,7 @@ local modems = {
 local m = Map("gpoint", translate(""))
 
 -- Service
-local s = m:section(TypedSection, "modem_settings", translate("Service"))
+local s = m:section(TypedSection, "service_settings", translate("Service"))
 s.anonymous = true
 s.addremove = false
 
@@ -65,10 +65,23 @@ o = s:option(DummyValue, "_dummy", translate("Service Status:"))
 o.template = packageName .. "/service_status"
 
 
--- Modem
-s = m:section(TypedSection, "modem_settings", translate("Modem"), translate("Select the modem(s) to find the location"))
+-- Modem settings (application)
+s = m:section(TypedSection, "modem_settings", translate("Application settings"), translate("Select mode and modem(s) to find location"))
 s.anonymous = true
 s.addremove = false
+
+-- Parser mode:
+o = s:option(ListValue, "mode", translate("Parser mode:"))
+o.widget = "radio"
+o:value("nmea", "GPOINT")
+o:value("gpsd", "GPSD")
+o.default = "nmea"
+
+-- Add TimeZone
+o = s:option(ListValue, "timezone", translate("Timezone:"))
+for _, zone in pairs(timezone) do
+	o:value(zone[2], zone[1])
+end
 
 local no_device = true
 o = s:option(ListValue, "modem", translate("Modem(s):"))
@@ -113,12 +126,25 @@ else
 	end
 end
 
--- Add TimeZone
-o = s:option(ListValue, "timezone", translate("Timezone:"))
-for _, zone in pairs(timezone) do
-	o:value(zone[2], zone[1])
-end
+o = s:option(Value, "gpsd_ip", translate("Address:"))
+o.datatype = "host"
+o.placeholder = "127.0.0.1"
+o.default = "127.0.0.1"
+o:depends("mode","gpsd")
 
+o = s:option(Value, "gpsd_port", translate("Port:"))
+o.datatype = "port"
+o.placeholder = "2947"
+o.default = "2947"
+o:depends("mode","gpsd")
+
+o = s:option(DummyValue, "gpsd_config")
+function o.cfgvalue(self, section)
+	local h = "<a href=\"http://trac.gateworks.com/wiki/OpenWrt/GPS\">OpenWrt GPS configuration with GPSD</a>"
+	return translate(h)
+end
+o.rawhtml = true
+o:depends("mode","gpsd")
 
 -- Remote Server
 s = m:section(TypedSection, "server_settings", translate("Remote Server"), translate("Configuration of the remote navigation server"))
@@ -268,7 +294,7 @@ o.optional = true
 o = s:taboption("geofence", Value, "geofence_script_path", translate("Script PATH:"))
 o.placeholder = ""
 o = s:taboption("geofence", ListValue, "geofence_script_when", translate("When:"), translate("In which case to execute the script"))
-o.default = 1
+o.default = "All"
 o:value("All", "All")
 o:value("Leaving", "Leaving")
 o:value("Coming", "Coming")
