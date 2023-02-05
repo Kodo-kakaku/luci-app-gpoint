@@ -41,24 +41,26 @@ NMEA data to any of the available ports.
 EXAMPLE: /dev/ttyUSB*
 '''
 - In the model file, you must add the vid, pid, and name of your device.
-'''
+
+```
 MODEL PATH: 
 /usr/lib/lua/luci/model/cbi/gpoint/gpoint.lua
 
 ADD DEVICE: 
 local modems = {
   ["Quectel"] = {
-		   ["2c7c:0306"] = "EP06",
+     ["2c7c:0306"] = "EP06",
      ...
   },
   ["MY DEVICE VENDOR NAME"] = {
      ["PID:VID"] = "MODEL NAME",
      ...
   }
-'''
+```
 - It is necessary to add commands to start/stop sending data to the port in the configuration file.
 (if such commands are not required, you must set "-" instead of commands)
-'''
+
+```
 CONFIG PATH:
 /usr/share/gpoint/lib/config.lua
 
@@ -76,7 +78,8 @@ local MODEM = {
         START = '-',
         STOP = '-'
     }
-'''
+```
+
 - That's it! Now your device works with Point! 
 If there are any difficulties with adding a new device or you want to help the project,
 open an issue or send a pull request with your changes!
