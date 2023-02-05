@@ -151,6 +151,7 @@ conn:close()
 local timeToUpdateGNSSdata = 3
 while true do
     -- modem GNSS data
+    local optionalParams = {}
     local portStatus, GnssData = portActive(modemConfig.port)
     if portStatus then
         GnssData = gnssParser.getAllData(modemConfig)
