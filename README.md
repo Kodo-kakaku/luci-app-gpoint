@@ -37,9 +37,9 @@ It doesn't matter if you use a router in transport or it is installed in your te
 ## How to add an unsupported device
 - Most importantly, your device should be able to constantly send 
 NMEA data to any of the available ports.
-'''
+```
 EXAMPLE: /dev/ttyUSB*
-'''
+```
 - In the model file, you must add the vid, pid, and name of your device.
 
 ```
