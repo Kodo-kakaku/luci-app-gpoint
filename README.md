@@ -52,8 +52,8 @@ local modems = {
      ["2c7c:0306"] = "EP06",
      ...
   },
-  ["MY DEVICE VENDOR NAME"] = {
-     ["PID:VID"] = "MODEL NAME",
+  ["MY_DEVICE_VENDOR_NAME"] = {
+     ["PID:VID"] = "MODEL_NAME",
      ...
   }
 ```
@@ -81,6 +81,7 @@ local MODEM = {
 ```
 
 - That's it! Now your device works with GPoint! 
+
 If there are any difficulties with adding a new device or you want to help the project,
 open an issue or send a pull request with your changes!
 
