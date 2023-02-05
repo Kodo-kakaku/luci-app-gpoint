@@ -80,7 +80,7 @@ local MODEM = {
     }
 ```
 
-- That's it! Now your device works with Point! 
+- That's it! Now your device works with GPoint! 
 If there are any difficulties with adding a new device or you want to help the project,
 open an issue or send a pull request with your changes!
 
