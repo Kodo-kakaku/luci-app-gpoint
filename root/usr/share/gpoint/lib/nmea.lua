@@ -8,6 +8,7 @@
 local uci = require("luci.model.uci")
 local serial = require("serial")
 local checksum = require("checksum")
+local nixio = require("nixio.fs")
 
 local nmea = {}
 

@@ -24,11 +24,31 @@ local function createGnssForm()
         gns = { true, "not use" },
         server = { true, "" },
         locator = { true, "" }
-    },
-             gp = { longitude = "-", latitude = "-" },
-             gga = { longitude = "-", latitude = "-" },
-             gns = { longitude = "-", latitude = "-" }
-    }
+    }, gp = {
+        hdop = '-',
+        date = '-',
+        spkm = '-',
+        altitude = '-',
+        unix = '-',
+        longitude = '-',
+        latitude = '-',
+        cog = '-',
+        nsat = '-'
+    }, gga = {
+        latitude = '-',
+        longitude = '-',
+        alt = '-',
+        sat = '-'
+    }, vtg = {
+        speed = '-',
+        course_t = '-',
+    }, rmc = {
+        date = '-',
+        utc = '-'
+    }, gns = {
+        longitude = '-',
+        latitude = '-'
+    } }
 end
 
 local function addZero(val)
@@ -95,38 +115,31 @@ function gpsd.getAllData(modemConfig)
     end
 
     -- FOR GP --
-    GnssData.gp = {
-        hdop = string.format("%0.2f", tostring(gnssReq.sky[1].hdop)),
-        date = string.gsub(string.sub(gnssReq.tpv[1].time, 1, string.find(gnssReq.tpv[1].time, 'T') - 1), '-', ''),
-        spkm = tostring(gnssReq.tpv[1].speed),
-        altitude = string.format("%0.1f", tostring(gnssReq.tpv[1].alt)),
-        unix = string.gsub(string.sub(gnssReq.tpv[1].time, string.find(gnssReq.tpv[1].time, 'T') + 1, string.len(gnssReq.tpv[1].time) - 1), ':', ''),
-        longitude = string.format("%0.6f", tostring(gnssReq.tpv[1].lon)),
-        latitude = string.format("%0.6f", tostring(gnssReq.tpv[1].lat)),
-        cog = tostring(gnssReq.tpv[1].track),
-        nsat = tostring(gnssReq.sky[1].nSat)
-    }
+    GnssData.gp.hdop = string.format("%0.2f", tostring(gnssReq.sky[1].hdop))
+    GnssData.gp.date = string.gsub(string.sub(gnssReq.tpv[1].time, 1, string.find(gnssReq.tpv[1].time, 'T') - 1), '-', '')
+    GnssData.gp.spkm = tostring(gnssReq.tpv[1].speed)
+    GnssData.gp.altitude = string.format("%0.1f", tostring(gnssReq.tpv[1].alt))
+    GnssData.gp.unix = string.gsub(string.sub(gnssReq.tpv[1].time, string.find(gnssReq.tpv[1].time, 'T') + 1, string.len(gnssReq.tpv[1].time) - 1), ':', '')
+    GnssData.gp.longitude = string.format("%0.6f", tostring(gnssReq.tpv[1].lon))
+    GnssData.gp.latitude = string.format("%0.6f", tostring(gnssReq.tpv[1].lat))
+    GnssData.gp.cog = tostring(gnssReq.tpv[1].track)
+    GnssData.gp.nsat = tostring(gnssReq.sky[1].nSat)
+
     GnssData.gp.date = string.sub(GnssData.gp.date, 7, 8) .. string.sub(GnssData.gp.date, 5, 6) .. string.sub(GnssData.gp.date, 3, 4)
 
     -- FOR GGA --
-    GnssData.gga = {
-        latitude = degreesToNmea(gnssReq.tpv[1].lat),
-        longitude = degreesToNmea(gnssReq.tpv[1].lon),
-        alt = GnssData.gp.altitude,
-        sat = GnssData.gp.nsat
-    }
+    GnssData.gga.latitude = degreesToNmea(gnssReq.tpv[1].lat)
+    GnssData.gga.longitude = degreesToNmea(gnssReq.tpv[1].lon)
+    GnssData.gga.alt = GnssData.gp.altitude
+    GnssData.gga.sat = GnssData.gp.nsat
 
     -- FOR VTG --
-    GnssData.vtg = {
-        speed = GnssData.gp.spkm,
-        course_t = GnssData.gp.cog
-    }
+    GnssData.vtg.speed = GnssData.gp.spkm
+    GnssData.vtg.course_t = GnssData.gp.cog
 
     --FOR RMC --
-    GnssData.rmc = {
-        date = GnssData.gp.date,
-        utc = GnssData.gp.unix
-    }
+    GnssData.rmc.date = GnssData.gp.date
+    GnssData.rmc.utc = GnssData.gp.unix
 
     local unixTime = findTimeZone(GnssData.gp.unix, GnssData.gp.date)
     local dateTime = os.date("*t", unixTime)

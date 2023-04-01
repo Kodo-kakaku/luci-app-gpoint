@@ -47,13 +47,14 @@ if not modemStatus[1] then
     else
         gnssParser = require("gpsd")
         if gpsd.core.port ~= modemConfig.gpsd_port
-                or gpsd.core.device ~= modemConfig.port
-                or gpsd.core.enabled ~= '1'
-                or gpsd.core.listen_globally ~= '0' then
+                or gpsd.core.device ~= modemConfig.gpsd_device
+                or gpsd.core.listen_globally ~= modemConfig.gpsd_listen_globally
+                or gpsd.core.enabled ~= '1' then
+            luci.sys.init.stop("gpsd")
+            uci:set("gpsd", "core", "port", modemConfig.gpsd_port)
+            uci:set("gpsd", "core", "device", modemConfig.gpsd_device)
+            uci:set("gpsd", "core", "listen_globally", modemConfig.gpsd_listen_globally)
             uci:set("gpsd", "core", "enabled", "1")
-            uci:set("gpsd", "core", "device", modemConfig.port)
-            uci:set("gpsd", "core", "port", "2947")
-            uci:set("gpsd", "core", "listen_globally", "0")
             uci:commit("gpsd")
         end
         luci.sys.init.start("gpsd")

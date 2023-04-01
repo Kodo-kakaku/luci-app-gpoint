@@ -107,8 +107,10 @@ function config.getModemData()
         modem.port = CFG.modem_settings.port
         modem.mode = CFG.modem_settings.mode
         if modem.mode == "gpsd" then
+            modem.gpsd_device = CFG.modem_settings.port
             modem.gpsd_ip = CFG.modem_settings.gpsd_ip
             modem.gpsd_port = CFG.modem_settings.gpsd_port
+            modem.gpsd_listen_globally = CFG.modem_settings.listen_globally
         end
     end
     return err, modem

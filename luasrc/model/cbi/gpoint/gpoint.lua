@@ -4,11 +4,10 @@
 -- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
-local fs   = require("nixio.fs")
-local sys  = require("luci.sys")
+local fs = require("nixio.fs")
+local sys = require("luci.sys")
 local util = require("luci.util")
 local json = require("luci.jsonc")
-
 
 local packageName = "gpoint"
 local helperText = ""
@@ -18,36 +17,36 @@ local lsusb = sys.exec("lsusb")
 local device_port = fs.glob("/dev/tty[A-Z][A-Z]*")
 
 local timezone = {
-	{'Autodetect (experimental)','auto'},{'Etc/GMT',      '0' },{ 'Etc/GMT+1',   '1' },{ 'Etc/GMT+10',  '10'},
-	{ 'Etc/GMT+11',  			   '11'},{ 'Etc/GMT+12',  '12'},{ 'Etc/GMT+2',   '2' },{ 'Etc/GMT+3',   '3' },
-	{ 'Etc/GMT+4',   			   '4' },{ 'Etc/GMT+5',   '5' },{ 'Etc/GMT+6',   '6' },{ 'Etc/GMT+7',   '7' },
-	{ 'Etc/GMT+8',  			   '8' },{ 'Etc/GMT+9',   '9' },{ 'Etc/GMT-1',  '-1' },{ 'Etc/GMT-10', '-10'},
-	{ 'Etc/GMT-11',               '-11'},{ 'Etc/GMT-12', '-12'},{ 'Etc/GMT-13', '-13'},{ 'Etc/GMT-14', '-14'},
-	{ 'Etc/GMT-2',                '-2' },{ 'Etc/GMT-3',  '-3' },{ 'Etc/GMT-4',  '-4' },{ 'Etc/GMT-5',  '-5' },
-	{ 'Etc/GMT-6',                '-6' },{ 'Etc/GMT-7',  '-7' },{ 'Etc/GMT-8',  '-8' },{ 'Etc/GMT-9',  '-9' }
+    { 'Autodetect (experimental)', 'auto' }, { 'Etc/GMT', '0' }, { 'Etc/GMT+1', '1' }, { 'Etc/GMT+10', '10' },
+    { 'Etc/GMT+11', '11' }, { 'Etc/GMT+12', '12' }, { 'Etc/GMT+2', '2' }, { 'Etc/GMT+3', '3' },
+    { 'Etc/GMT+4', '4' }, { 'Etc/GMT+5', '5' }, { 'Etc/GMT+6', '6' }, { 'Etc/GMT+7', '7' },
+    { 'Etc/GMT+8', '8' }, { 'Etc/GMT+9', '9' }, { 'Etc/GMT-1', '-1' }, { 'Etc/GMT-10', '-10' },
+    { 'Etc/GMT-11', '-11' }, { 'Etc/GMT-12', '-12' }, { 'Etc/GMT-13', '-13' }, { 'Etc/GMT-14', '-14' },
+    { 'Etc/GMT-2', '-2' }, { 'Etc/GMT-3', '-3' }, { 'Etc/GMT-4', '-4' }, { 'Etc/GMT-5', '-5' },
+    { 'Etc/GMT-6', '-6' }, { 'Etc/GMT-7', '-7' }, { 'Etc/GMT-8', '-8' }, { 'Etc/GMT-9', '-9' }
 }
 
 local modems = {
-	["Quectel"] = {
-		["2c7c:0306"] = "EP06",
-		["2c7c:0512"] = "EM12",
-		["2c7c:0125"] = "EC25",
-		["2c7c:0800"] = "RM500Q"
-	},
-	["Sierra"] = {
-		["1199:9071"] = "EM7455",
-		["1199:9091"] = "EM7565"
-	},
-	["U-Blox"] = {
-		["1546:01a7"] = "VK-172"
-	},
-	["Simcom"] = {
-		["1e0e:9001"] = "SIM7600E-H"
-	},
-	["Dell"] = {
-		["413c:81d7"] = "DW5821e",
-		["413c:81e6"] = "DW5829e"
-	}
+    ["Quectel"] = {
+        ["2c7c:0306"] = "EP06",
+        ["2c7c:0512"] = "EM12",
+        ["2c7c:0125"] = "EC25",
+        ["2c7c:0800"] = "RM500Q"
+    },
+    ["Sierra"] = {
+        ["1199:9071"] = "EM7455",
+        ["1199:9091"] = "EM7565"
+    },
+    ["U-Blox"] = {
+        ["1546:01a7"] = "VK-172"
+    },
+    ["Simcom"] = {
+        ["1e0e:9001"] = "SIM7600E-H"
+    },
+    ["Dell"] = {
+        ["413c:81d7"] = "DW5821e",
+        ["413c:81e6"] = "DW5829e"
+    }
 
 }
 
@@ -80,71 +79,77 @@ o.default = "nmea"
 -- Add TimeZone
 o = s:option(ListValue, "timezone", translate("Timezone:"))
 for _, zone in pairs(timezone) do
-	o:value(zone[2], zone[1])
+    o:value(zone[2], zone[1])
 end
 
 local no_device = true
 o = s:option(ListValue, "modem", translate("Modem(s):"))
 if lsusb then
-	for modem_name, modem_data in pairs(modems) do
-		for id, modem in pairs(modem_data) do
-			if string.find(lsusb, id) then
-				no_device = false
-				o:value(modem_name .. '_' .. modem, modem_name .. ' ' .. modem)
-			end
-		end
-	end
+    for modem_name, modem_data in pairs(modems) do
+        for id, modem in pairs(modem_data) do
+            if string.find(lsusb, id) then
+                no_device = false
+                o:value(modem_name .. '_' .. modem, modem_name .. ' ' .. modem)
+            end
+        end
+    end
 end
 
 if no_device then
-	o:value('mnf', translate("-- Modems not found --"))
+    o:value('mnf', translate("-- Modems not found --"))
 end
 
 o = s:option(ListValue, "port", translate("Modem port:"), translate("Select the NMEA port of the device."))
 if no_device then
-	o:value('pnf', translate("-- disable --"))
-	o = s:option( DummyValue, "nfound")
-	function o.cfgvalue(self, section)
-		local nfound = "<div style=\"color: red;\"><b>No modem(s) found! Check the modem connections.</b><br> \
+    o:value('pnf', translate("-- disable --"))
+    o = s:option(DummyValue, "nfound")
+    function o.cfgvalue(self, section)
+        local nfound = "<div style=\"color: red;\"><b>No modem(s) found! Check the modem connections.</b><br> \
 						<div style=\"color: lime;\">Supported modems: "
-		for modem_name, modem_data in pairs(modems) do
-			nfound = nfound .. "<br>" .. modem_name .. ' '
-			for _, modem in pairs(modem_data) do
-				nfound = nfound  ..  modem .. ", "
-			end
-			nfound = nfound:sub(1, -3)
-		end
-		nfound = nfound .. "</div></div>"
-		return translate(nfound)
-	end
-	o.rawhtml = true
+        for modem_name, modem_data in pairs(modems) do
+            nfound = nfound .. "<br>" .. modem_name .. ' '
+            for _, modem in pairs(modem_data) do
+                nfound = nfound .. modem .. ", "
+            end
+            nfound = nfound:sub(1, -3)
+        end
+        nfound = nfound .. "</div></div>"
+        return translate(nfound)
+    end
+    o.rawhtml = true
 else
-	if device_port then
-		for node in device_port do
-			o:value(node, node)
-		end
-	end
+    if device_port then
+        for node in device_port do
+            o:value(node, node)
+        end
+    end
 end
 
 o = s:option(Value, "gpsd_ip", translate("Address:"))
 o.datatype = "host"
 o.placeholder = "127.0.0.1"
 o.default = "127.0.0.1"
-o:depends("mode","gpsd")
+o:depends("mode", "gpsd")
 
 o = s:option(Value, "gpsd_port", translate("Port:"))
 o.datatype = "port"
 o.placeholder = "2947"
 o.default = "2947"
-o:depends("mode","gpsd")
+o:depends("mode", "gpsd")
+
+o = s:option(ListValue, "listen_globally", translate("Listen globally:"))
+o.default = 0
+o:value(0, "No")
+o:value(1, "Yes")
+o:depends("mode", "gpsd")
 
 o = s:option(DummyValue, "gpsd_config")
 function o.cfgvalue(self, section)
-	local h = "<a href=\"http://trac.gateworks.com/wiki/OpenWrt/GPS\">OpenWrt GPS configuration with GPSD</a>"
-	return translate(h)
+    local h = "<a href=\"http://trac.gateworks.com/wiki/OpenWrt/GPS\">OpenWrt GPS configuration with GPSD</a>"
+    return translate(h)
 end
 o.rawhtml = true
-o:depends("mode","gpsd")
+o:depends("mode", "gpsd")
 
 -- Remote Server
 s = m:section(TypedSection, "server_settings", translate("Remote Server"), translate("Configuration of the remote navigation server"))
@@ -161,7 +166,7 @@ o.default = "trackcar"
 
 o = s:option(Value, "server_frequency", translate("Frequency:"), translate("Frequency of sending data to the Remote Server"))
 o.placeholder = "In seconds"
-o.datatype    = "range(5, 600)"
+o.datatype = "range(5, 600)"
 
 o = s:option(Value, "server_ip", translate("Address:"))
 o.datatype = "host"
@@ -179,28 +184,28 @@ o.password = true
 o.placeholder = "Device password"
 
 o = s:option(Flag, "blackbox_enable", translate("BlackBox enable:"),
-		translate("Blackbox makes it possible to record and store data even in the absence of a cellular signal"))
-o:depends("proto","wialon")
+        translate("Blackbox makes it possible to record and store data even in the absence of a cellular signal"))
+o:depends("proto", "wialon")
 
 o = s:option(Flag, "blackbox_cycle", translate("BlackBox cycle:"), translate("Cyclic overwriting of data stored in the BlackBox"))
 o:depends("proto", "wialon")
 
 o = s:option(Value, "blackbox_max_size", translate("BlackBox size:"), translate("Number of sentences in the BlackBox"))
 o.placeholder = "default: 1000 sentence"
-o.datatype    = "range(1000, 5000)"
-o:depends("proto","wialon")
+o.datatype = "range(1000, 5000)"
+o:depends("proto", "wialon")
 
 o = s:option(DummyValue, "_dummy", translate(" "))
 o.template = packageName .. "/blackbox"
-o:depends("proto","wialon")
+o:depends("proto", "wialon")
 
 o = s:option(Button, "clear", translate("Clear BlackBox"), translate("Warning! After clearing the BlackBox, GNSS data will be destroyed!"))
 o.inputstyle = "remove"
 o:depends("proto", "wialon")
 function o.write(self, section)
-	local file = io.open("/usr/share/gpoint/tmp/blackbox.json", 'w')
-	file:write(json.stringify({["size"]=0,["max"]=1000,["data"]={}}))
-	file:close()
+    local file = io.open("/usr/share/gpoint/tmp/blackbox.json", 'w')
+    file:write(json.stringify({ ["size"] = 0, ["max"] = 1000, ["data"] = {} }))
+    file:close()
 end
 
 
@@ -208,7 +213,6 @@ end
 s = m:section(TypedSection, "service_settings")
 s.addremove = false
 s.anonymous = true
-
 
 ----------------------------------------------------------------------------------------------------------------
 s:tab("ya", translate("Yandex Locator"), translate("Determines the location of the mobile \
@@ -228,12 +232,12 @@ o = s:taboption("ya", ListValue, "ya_wifi", translate("Interface:"), translate("
 local iwinfo = sys.exec("iwinfo")
 no_device = true
 for device in string.gmatch(iwinfo, "(%S+)(%s%s%s%s%s)(%S+)") do
-	o:value(device, device)
-	no_device = false
+    o:value(device, device)
+    no_device = false
 end
 
 if no_device then
-	o:value('wnf', translate("-- Wifi not found --"))
+    o:value('wnf', translate("-- Wifi not found --"))
 end
 
 o = s:taboption("ya", Value, "ya_key", translate("API Key:"), translate("To work with the Yandex locator must use an API key"))
@@ -242,8 +246,8 @@ o.placeholder = "Yandex API key"
 
 o = s:taboption("ya", DummyValue, "ya_href")
 function o.cfgvalue(self, section)
-	local h = "<a href=\"https://yandex.ru/dev/locator/keys/get/\">Get Yandex API key</a>"
-	return translate(h)
+    local h = "<a href=\"https://yandex.ru/dev/locator/keys/get/\">Get Yandex API key</a>"
+    return translate(h)
 end
 o.rawhtml = true
 
@@ -254,18 +258,18 @@ o.optional = true
 o = s:taboption("gpoint_filter", Value, "filter_changes", translate("Jump:"), translate("Registration of the \"jump\" coordinates. \
 		 The coordinate is recognized as valid after the modem has received it more than the specified number of times."))
 o.placeholder = ""
-o.datatype    = "range(2, 6)"
+o.datatype = "range(2, 6)"
 
 o = s:taboption("gpoint_filter", ListValue, "filter_hash", translate("Area:"), translate("The longer the hash length,\
 			the smaller the area and the greater the accuracy of the coordinates in one area."))
 o.optional = true
 o.default = 7
 for i = 1, 12 do
-	o:value(i, i)
+    o:value(i, i)
 end
 o = s:taboption("gpoint_filter", Value, "filter_speed", translate("Speed:"), translate("Above the specified speed, the filter will be disabled"))
 o.placeholder = "default 2 km/h"
-o.datatype    = "range(0, 150)"
+o.datatype = "range(0, 150)"
 
 -- Kalman
 o = s:taboption("kalman", Flag, "kalman_enable", translate("Enable:"), translate("Enabling KalmanFilter"))
@@ -273,7 +277,7 @@ o.optional = true
 o = s:taboption("kalman", Value, "kalman_noise", translate("Noise:"), translate("Noise is a parameter you can use to alter the expected noise.\
 			1.0 is the original, and the higher it is, the more a path will be \"smoothed\""))
 o.placeholder = ""
-o.datatype    = "range(1.0, 30.0)"
+o.datatype = "range(1.0, 30.0)"
 
 -- Geofencing
 o = s:taboption("geofence", Flag, "geofence_enable", translate("Enable:"), translate("Enabling geofencing"))
@@ -289,7 +293,7 @@ o:value(6, "~1220 m")
 o:value(7, "~153 m")
 o:value(8, "~38 m")
 o = s:taboption("geofence", Flag, "geofence_script", translate("Enable script:"),
-		translate("Execute the script in case of hitting or exiting the router from the geofence"))
+        translate("Execute the script in case of hitting or exiting the router from the geofence"))
 o.optional = true
 o = s:taboption("geofence", Value, "geofence_script_path", translate("Script PATH:"))
 o.placeholder = ""
