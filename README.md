@@ -25,6 +25,8 @@ It doesn't matter if you use a router in transport or it is installed in your te
 
 ## Supported devices
 - Dell DW5821e/DW5829e
+- Huawei ME909u-521
+- MEIGLink SLM820/SLM828
 - Quectel EC25/EP06/EM12/RM500Q 
 - Sierra EM7455/EM7565
 - Simcom SIM7600E-H
@@ -91,7 +93,7 @@ Thank you for your interest in the project!
 - Upload ipk file to tmp folder
 - cd /tmp
 - opkg update
-- opkg install luci-app-gpoint_2.5.3_all.ipk
+- opkg install luci-app-gpoint_2.5.5_all.ipk
 
 ## Uninstall
 - opkg remove luci-app-gpoint
