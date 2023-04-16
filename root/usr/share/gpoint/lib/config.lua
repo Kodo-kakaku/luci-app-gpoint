@@ -54,6 +54,14 @@ local MODEM = {
         START = "AT+CGPS=1,1",
         STOP = "AT+CGPS=0,1"
     },
+    MEIGLINK = {
+        START = "AT+GPSRUN=0,30,100,0,1",
+        STOP = "AT+GPSSTOP"
+    },
+    HUAWEI = {
+        START = "AT^WPDGP",
+        STOP = "AT^WPEND"
+    },
     UBLOX = {
         START = "-",
         STOP = "-"
@@ -99,6 +107,12 @@ function config.getModemData()
         elseif string.find(CFG.modem_settings.modem, "Simcom") then
             modem.start = MODEM.SIMCOM.START
             modem.stop = MODEM.SIMCOM.STOP
+        elseif string.find(CFG.modem_settings.modem, "MEIGLink") then
+            modem.start = MODEM.MEIGLINK.START
+            modem.stop = MODEM.MEIGLINK.STOP
+        elseif string.find(CFG.modem_settings.modem, "Huawei") then
+            modem.start = MODEM.HUAWEI.START
+            modem.stop = MODEM.HUAWEI.STOP
         elseif string.find(CFG.modem_settings.modem, "Dell") then
             modem.start = MODEM.DELL.START
             modem.stop = MODEM.DELL.STOP

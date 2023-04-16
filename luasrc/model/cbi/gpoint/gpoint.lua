@@ -43,6 +43,12 @@ local modems = {
     ["Simcom"] = {
         ["1e0e:9001"] = "SIM7600E-H"
     },
+    ["Huawei"] = {
+        ["12d1:1573"] = "ME909u-521"
+    },
+    ["MEIGLink"] = {
+        ["2dee:4d22"] = "SLM820/SLM828"
+    },
     ["Dell"] = {
         ["413c:81d7"] = "DW5821e",
         ["413c:81e6"] = "DW5829e"

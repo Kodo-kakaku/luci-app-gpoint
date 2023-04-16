@@ -388,7 +388,8 @@ function nmea.getAllData(modemConfig)
 end
 
 function nmea.startGNSS(port, command)
-    local p = tonumber(string.sub(port, #port)) + 1
+    local p = tonumber(string.sub(port, #port))
+    p = p > 2 and p - 1 or p + 1
     p = string.gsub(port, '%d', tostring(p))
     local error, resp = true, {
         warning = {

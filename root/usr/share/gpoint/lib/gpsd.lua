@@ -14,41 +14,15 @@ local serial = require("serial")
 gpsd = {}
 
 local function createGnssForm()
-    return { warning = {
-        app = { true, "" },
-        gga = { true, "" },
-        rmc = { true, "" },
-        vtg = { true, "" },
-        gsa = { true, "not use" },
-        gp = { true, "" },
-        gns = { true, "not use" },
-        server = { true, "" },
-        locator = { true, "" }
-    }, gp = {
-        hdop = '-',
-        date = '-',
-        spkm = '-',
-        altitude = '-',
-        unix = '-',
-        longitude = '-',
-        latitude = '-',
-        cog = '-',
-        nsat = '-'
-    }, gga = {
-        latitude = '-',
-        longitude = '-',
-        alt = '-',
-        sat = '-'
-    }, vtg = {
-        speed = '-',
-        course_t = '-',
-    }, rmc = {
-        date = '-',
-        utc = '-'
-    }, gns = {
-        longitude = '-',
-        latitude = '-'
-    } }
+    return { warning = { app = { true, "" }, gga = { true, "" }, rmc = { true, "" }, vtg = { true, "" },
+                         gsa = { true, "not use" }, gp = { true, "" }, gns = { true, "not use" },
+                         server = { true, "" }, locator = { true, "" } },
+             gp = { hdop = '-', utc = '-', date = '-', spkm = '-', altitude = '-', unix = '-',
+                    longitude = '-', latitude = '-', cog = '-', nsat = '-' },
+             gga = { latitude = '-', longitude = '-', alt = '-', sat = '-' },
+             vtg = { speed = '-', course_t = '-' },
+             rmc = { date = '-', utc = '-' },
+             gns = { longitude = '-', latitude = '-' } }
 end
 
 local function addZero(val)
@@ -157,7 +131,8 @@ function gpsd.getAllData(modemConfig)
 end
 
 function gpsd.startGNSS(port, command)
-    local p = tonumber(string.sub(port, #port)) + 1
+    local p = tonumber(string.sub(port, #port))
+    p = p > 2 and p - 1 or p + 1
     p = string.gsub(port, '%d', tostring(p))
     local error, resp = true, {
         warning = {
