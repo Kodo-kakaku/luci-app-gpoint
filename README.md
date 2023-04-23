@@ -1,5 +1,5 @@
 <h2 align="center">
-<img src="https://github.com/Kodo-kakaku/luci-app-gpoint/blob/main/Images/logo.png" alt="Gpoint" height="200" width="370">
+<img src="Images/logo.png" alt="Gpoint" height="200" width="370">
 <br>Global Navigation Satellite System for OpenWrt LuCi
 <br>
 </h2>
@@ -11,9 +11,9 @@ It doesn't matter if you use a router in transport or it is installed in your te
 <details>
 <summary>Screenshots</summary>
 
-<img src="https://github.com/Kodo-kakaku/luci-app-gpoint/blob/main/Images/overview_wait.png" alt="overview_wait">
-<img src="https://github.com/Kodo-kakaku/luci-app-gpoint/blob/main/Images/overview.png" alt="overview">
-<img src="https://github.com/Kodo-kakaku/luci-app-gpoint/blob/main/Images/settings.png" alt="overview">
+<img src="Images/overview_wait.png" alt="overview_wait">
+<img src="Images/overview.png" alt="overview">
+<img src="Images/settings.png" alt="settings">
 </details>
 
 ## Features
