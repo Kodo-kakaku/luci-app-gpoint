@@ -57,14 +57,14 @@ It doesn't matter if you use a router in transport or it is installed in your te
 
   ```lua
   local modems = {
-    ["Quectel"] = {
-        ["2c7c:0306"] = "EP06",
-        ...
-    },
-    ["MY_DEVICE_VENDOR_NAME"] = {
-        ["PID:VID"] = "MODEL_NAME",
-        ...
-    }
+      ["Quectel"] = {
+          ["2c7c:0306"] = "EP06",
+          ...
+      },
+      ["MY_DEVICE_VENDOR_NAME"] = {
+          ["PID:VID"] = "MODEL_NAME",
+          ...
+      }
   ```
 
 - It is necessary to add commands to start/stop sending data to the port in the configuration file.
