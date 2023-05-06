@@ -88,6 +88,7 @@ function gpsd.getAllData(modemConfig)
         return GnssData
     end
 
+
     -- FOR GP --
     GnssData.gp.hdop = string.format("%0.2f", tostring(gnssReq.sky[1].hdop))
     GnssData.gp.date = string.gsub(string.sub(gnssReq.tpv[1].time, 1, string.find(gnssReq.tpv[1].time, 'T') - 1), '-', '')

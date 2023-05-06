@@ -68,6 +68,7 @@ local MODEM = {
     }
 }
 
+
 -----------------------------------------------------------------------------------
 -- APP (Modem Settings)
 -- 1.Checking the configuration for the presence of the modem name

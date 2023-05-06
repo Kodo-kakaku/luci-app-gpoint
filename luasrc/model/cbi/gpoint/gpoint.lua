@@ -133,6 +133,7 @@ else
     end
 end
 
+
 o = s:option(Value, "gpsd_ip", translate("Address:"))
 o.datatype = "host"
 o.placeholder = "127.0.0.1"
