@@ -124,6 +124,7 @@ function config.getModemData()
             modem.gpsd_device = CFG.modem_settings.port
             modem.gpsd_ip = CFG.modem_settings.gpsd_ip
             modem.gpsd_port = CFG.modem_settings.gpsd_port
+            modem.gpsd_speed = CFG.modem_settings.gpsd_speed
             modem.gpsd_listen_globally = CFG.modem_settings.listen_globally
         end
     end
