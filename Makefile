@@ -5,8 +5,8 @@ LUCI_DEPENDS:=+lua +luci-compat +curl +lua-rs232 +luasocket +iwinfo +libiwinfo-l
 PKG_LICENSE:=GPLv3
 PKG_VERSION:=2.5.7
 
-define Package/luci-app-gpoint/conffiles
-	/etc/config/gpoint
+define Package/luci-app-gpoint/postrm
+	rm -f /etc/config/gpoint
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
