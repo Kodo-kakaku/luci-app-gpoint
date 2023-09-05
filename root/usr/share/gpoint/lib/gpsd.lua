@@ -81,7 +81,7 @@ function gpsd.getAllData(modemConfig)
     end
 
     gnssReq = json.parse(gnssReq)
-    if gnssReq.tpv[1] == nil or gnssReq.tpv[1].mode == 1 then
+    if gnssReq == nil and gnssReq.tpv == nil and gnssReq.tpv[1] == nil and gnssReq.tpv[1].mode == nil or gnssReq.tpv[1].mode == 1 then
         for _, i in pairs(GnssData.warning) do
             i[2] = "Gnss data not found"
         end
