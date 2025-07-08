@@ -1,14 +1,16 @@
 <%#
 Module for providing data from a mobile satellite navigation system ( mobile modems, etc.)
--= Design and Development 2021-2022 =-
+-= Design and Development 2021-2025 =-
 Licensed to the public under the Apache License 2.0.
 -%>
 
 <%+gpoint/css/style%>
 
 <%+header%>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@main/dist/en/v6.8.1/css/ol.css"
-      type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/ol@v10.6.0/dist/ol.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.0/ol.css">
+
+
 <style type="text/css">
     #marker {
         width: 200px;
@@ -61,8 +63,10 @@ Licensed to the public under the Apache License 2.0.
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@main/dist/en/v6.8.1/build/ol.js"></script>
+
 <%+gpoint/js/js%>
+
+
 <script type="text/javascript">
     var prev = true; // show geolocation (auto zoom) <%=resource%>/gpoint
     const keys = ["longitude", "latitude", "altitude", "utc", "date", "nsat", "hdop", "cog", "spkm"];
@@ -140,3 +144,4 @@ Licensed to the public under the Apache License 2.0.
         });
 </script>
 <%+footer%>
+
