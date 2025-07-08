@@ -2,7 +2,7 @@
 -- Module is designed to work with the Yandex Locator API
 -- (WiFi is required!)
 -------------------------------------------------------------------
--- Copyright 2021-2022 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2025 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local json    = require("luci.jsonc")
@@ -11,26 +11,31 @@ local iwinfo  = require("iwinfo")
 
 locator = {}
 
-local function configJSON(jsonData, iface, key)
-	jsonData.common.api_key = key
+local function configJSON(jsonData, iface)
 	local inter = iwinfo.type(iface)
 	local scanlist = iwinfo[inter].scanlist(iface)
 	for _, v in pairs(scanlist) do
 		v.bssid = string.gsub(v.bssid, ':', '')
-		table.insert(jsonData.wifi_networks, {["mac"] = v.bssid, ["signal_strength"] = v.signal})
+		table.insert(jsonData.wifi, {
+			["bssid"] = v.bssid,
+			["signal_strength"] = v.signal
+		})
 	end
 end
 
 local function request(curl, jsonData)
-	curl = curl .. json.stringify(jsonData) .. '\''
-	local res = sys.exec(curl)
+	local cmd = string.format(
+			'curl -H "Content-Type: application/json" -X POST "%s" -d \'%s\'',
+			curl,
+			json.stringify(jsonData)
+	)
+	local res = sys.exec(cmd)
 	if res == "" then
 		res = "{\"error\": {\"message\":\"No internet connection\"}}"
 	end
 	return json.parse(res)
 end
 
--- Converter from degrees to NMEA data.
 function locator.degreesToNmea(coord)
 	local degrees = math.floor(coord)
 	coord = math.abs(coord) - degrees
@@ -38,38 +43,44 @@ function locator.degreesToNmea(coord)
 	return sign .. string.format("%02i%02.5f", degrees, coord * 60.00)
 end
 
--- Getting data coordinates via Yandex API
 function locator.getLocation(iface_name, api_key)
-	local curl = "curl -X POST 'http://api.lbs.yandex.net/geolocation' -d 'json="
+	local endpoint = string.format("https://locator.api.maps.yandex.ru/v1/locate?apikey=%s", api_key)
+
 	local jsonData = {
-		wifi_networks = {},
-		common = {
-			version = "1.0",
-			api_key = ""
-		}
+		wifi = {}
 	}
 
-	configJSON(jsonData, iface_name, api_key)
-	local location = request(curl, jsonData)
+	configJSON(jsonData, iface_name)
+	local response = request(endpoint, jsonData)
 	local err = {false, "OK"}
 	local latitude  = ""
 	local longitude = ""
-	local altitude  = ""
 
-	if location.error then
-		err = {true, location.error.message}
+	if not response or next(response) == nil then
+		return {true, "Yandex locator empty request"}, latitude, longitude
 	end
 
-	if location.position then
-		if tonumber(location.position.precision) >= 100000  then
+	if response.error then
+		err = {true, response.error.message}
+		return err, latitude, longitude
+	end
+
+	if response.location and response.location.point then
+		if response.location.accuracy and tonumber(response.location.accuracy) >= 100000 then
 			err = {true, "Bad precision"}
 		else
-			latitude  = string.format("%0.8f", location.position.latitude)
-			longitude = string.format("%0.8f", location.position.longitude)
-			if latitude == "" or longitude == "" then
-				err = {true, "Bad data..."}
+			local lat = tonumber(response.location.point.lat)
+			local lon = tonumber(response.location.point.lon)
+
+			if lat and lon then
+				latitude  = string.format("%0.8f", lat)
+				longitude = string.format("%0.8f", lon)
+			else
+				err = {true, "Bad coordinates"}
 			end
 		end
+	else
+		err = {true, "Bad data"}
 	end
 
 	return err, latitude, longitude
