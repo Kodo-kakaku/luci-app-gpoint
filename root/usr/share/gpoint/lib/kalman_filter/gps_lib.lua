@@ -108,6 +108,7 @@ function gps_lib.get_mph(kalman_filter)
     return gps_lib.calculate_mph(lat, lon, delta_lat, delta_lon)
 end
 
+-- Converts decimal degrees to NMEA format (ddmm.mmmmm)
 function gps_lib.degreesToNmea(coord)
 	local degrees = math.floor(coord)
 	coord = math.abs(coord) - degrees
