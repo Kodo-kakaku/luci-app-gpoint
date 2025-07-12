@@ -103,9 +103,16 @@ function gps_lib.calculate_mph(lat, lon, delta_lat, delta_lon)
 end
 
 function gps_lib.get_mph(kalman_filter)
-	local lat, lon = gps_lib.get_lat_lon(kalman_filter)
-	local delta_lat, delta_lon = gps_lib.get_velocity(kalman_filter)
-	return gps_lib.calculate_mph(lat, lon, delta_lat, delta_lon)
+    local lat, lon = gps_lib.get_lat_lon(kalman_filter)
+    local delta_lat, delta_lon = gps_lib.get_velocity(kalman_filter)
+    return gps_lib.calculate_mph(lat, lon, delta_lat, delta_lon)
+end
+
+function gps_lib.degreesToNmea(coord)
+	local degrees = math.floor(coord)
+	coord = math.abs(coord) - degrees
+	local sign = coord < 0 and "-" or ""
+	return sign .. string.format("%02i%02.5f", degrees, coord * 60.00)
 end
 
 return gps_lib
