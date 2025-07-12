@@ -411,14 +411,4 @@ function nmea.startGNSS(port, command)
     return error, resp
 end
 
--- Converts decimal degrees to NMEA format (ddmm.mmmmm)
-local function degreesToNmea(coord)
-    local degrees = math.floor(coord)
-    coord = math.abs(coord) - degrees
-    local sign = coord < 0 and "-" or ""
-    return sign .. string.format("%02i%02.5f", degrees, coord * 60.00)
-end
-
-nmea.degreesToNmea = degreesToNmea
-
 return nmea
