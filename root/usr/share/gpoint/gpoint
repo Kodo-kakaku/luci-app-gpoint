@@ -13,6 +13,7 @@ local socket = require("socket")
 local nixio = require("nixio.fs")
 local ubus = require("ubus")
 local uci = require("luci.model.uci")
+local nmea = require("nmea")
 
 function portActive(port)
     local fport = nixio.glob("/dev/tty[A-Z][A-Z]*")
@@ -257,7 +258,7 @@ while true do
             end
             kalman = kalmanFilter.update_velocity2d(kalman, GnssData.gp.latitude, GnssData.gp.longitude, os.time() - secondsSinceLastUpdate)
             GnssData.gp.latitude, GnssData.gp.longitude = kalmanFilter.get_lat_lon(kalman)
-            GnssData.gga.latitude, GnssData.gga.longitude = locator.degreesToNmea(GnssData.gp.latitude), ('0' .. locator.degreesToNmea(GnssData.gp.longitude))
+            GnssData.gga.latitude, GnssData.gga.longitude = nmea.degreesToNmea(GnssData.gp.latitude), ('0' .. nmea.degreesToNmea(GnssData.gp.longitude))
             GnssData.gns.latitude, GnssData.gns.longitude = GnssData.gga.latitude, GnssData.gga.longitude
             server_kalman_status = "run"
         else
