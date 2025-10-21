@@ -30,7 +30,7 @@ It doesn't matter if you use a router in transport or it is installed in your te
 
 ## Supported devices
 
-- Dell DW5821e/DW5829e
+- Dell DW5821e/DW5829e/DW5829e-eSIM
 - Huawei ME909u-521
 - MEIGLink SLM820/SLM828
 - Quectel EC21/EC25/EP06/EM12/EM160R/RM500Q/RM520N
