@@ -56,7 +56,7 @@ local MODEM = {
     },
     MEIGLINK = {
         START = {"AT+GPSCFG=\"outport\",1", "AT+GPSRUN=0,30,100,0,1"},
-        STOP = {"AT+GPSCFG=\"outport\",1", "AT+GPSSTOP"}
+        STOP = {"AT+GPSSTOP", "AT+GPSCFG=\"outport\",0"}
     },
     HUAWEI = {
         START = {"AT^WPDGP"},
