@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 -- Module is used for point configuration and interaction with the UI
 -------------------------------------------------------------------
--- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2026 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local uci = require("luci.model.uci")
@@ -39,32 +39,32 @@ local STATUS = {
 
 local MODEM = {
     DELL = {
-        START = "AT+GPS=1",
-        STOP = "AT+GPS=0"
+        START = {"AT+GPS=1"},
+        STOP = {"AT+GPS=0"}
     },
     QUECTEL = {
-        START = "AT+QGPS=1",
-        STOP = "AT+QGPSEND"
+        START = {"AT+QGPS=1"},
+        STOP = {"AT+QGPSEND"}
     },
     SIERRA = {
-        START = "$GPS_START",
-        STOP = "$GPS_STOP"
+        START = {"$GPS_START"},
+        STOP = {"$GPS_STOP"}
     },
     SIMCOM = {
-        START = "AT+CGPS=1,1",
-        STOP = "AT+CGPS=0,1"
+        START = {"AT+CGPS=1,1"},
+        STOP = {"AT+CGPS=0,1"}
     },
     MEIGLINK = {
-        START = "AT+GPSRUN=0,30,100,0,1",
-        STOP = "AT+GPSSTOP"
+        START = {"AT+GPSCFG=\"outport\",1", "AT+GPSRUN=0,30,100,0,1"},
+        STOP = {"AT+GPSCFG=\"outport\",1", "AT+GPSSTOP"}
     },
     HUAWEI = {
-        START = "AT^WPDGP",
-        STOP = "AT^WPEND"
+        START = {"AT^WPDGP"},
+        STOP = {"AT^WPEND"}
     },
     UBLOX = {
-        START = "-",
-        STOP = "-"
+        START = {"-"},
+        STOP = {"-"}    
     }
 }
 
