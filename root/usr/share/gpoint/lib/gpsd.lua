@@ -156,10 +156,6 @@ function nmea.startGNSS(port, commands)
                 for i, command in ipairs(commands) do
                     if command ~= '-' then
                         error, resp = serial.write(p, command)
-                        if error then
-                            break 
-                        end
-                        
                         if i < #commands then
                             socket.sleep(0.5)
                         end
