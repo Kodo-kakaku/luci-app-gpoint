@@ -2,10 +2,11 @@
 -- This module is designed to extract data from NMEA messages. 
 -- All data is combined into a table "GnssData".
 -------------------------------------------------------------
--- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2026 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local uci = require("luci.model.uci")
+local socket = require("socket")
 local serial = require("serial")
 local checksum = require("checksum")
 local nixio = require("nixio.fs")
@@ -387,7 +388,7 @@ function nmea.getAllData(modemConfig)
     return GnssData
 end
 
-function nmea.startGNSS(port, command)
+function nmea.startGNSS(port, commands)
     local p = tonumber(string.sub(port, #port))
     p = p > 2 and p - 1 or p + 1
     p = string.gsub(port, '%d', tostring(p))
@@ -398,11 +399,28 @@ function nmea.startGNSS(port, command)
             server = {}
         }
     }
-    if command ~= '-' then
+    
+    if type(commands) == "string" then
+        commands = {commands}
+    end
+    
+    -- Execute multiple commands
+    if commands[1] ~= '-' then
         local fport = nixio.glob("/dev/tty[A-Z][A-Z]*")
         for name in fport do
             if string.find(name, p) then
-                error, resp = serial.write(p, command)
+                for i, command in ipairs(commands) do
+                    if command ~= '-' then
+                        error, resp = serial.write(p, command)
+                        if error then
+                            break 
+                        end
+                        
+                        if i < #commands then
+                            socket.sleep(0.5)
+                        end
+                    end
+                end
             end
         end
     else
