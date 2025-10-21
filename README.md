@@ -77,12 +77,16 @@ It doesn't matter if you use a router in transport or it is installed in your te
   ```lua
   local MODEM = {
       DELL = {
-          START = "AT+GPS=1",
-          STOP = "AT+GPS=0"
+          START = {"AT+GPS=1"},
+          STOP = {"AT+GPS=0"}
       },
       MY_DEVICE_WITH_START/STOP_COMMAND = {
-          START = "DEVICE_AT_COMMAND_TO_START",
-          STOP = "DEVICE_AT_COMMAND_TO_STOP"
+          START = {"DEVICE_AT_COMMAND_TO_START"},
+          STOP = {"DEVICE_AT_COMMAND_TO_STOP"}
+      },
+       MY_DEVICE_WITH_MULTIPLE_START/STOP_COMMAND = {
+          START = {"SOME_COOMAND", "DEVICE_AT_COMMAND_TO_START"},
+          STOP = {"SOME_COMMAND", "DEVICE_AT_COMMAND_TO_STOP"}
       },
       MY_DEVICE_WITHOUT_COMMAND = {
           START = '-',
