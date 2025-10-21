@@ -89,8 +89,8 @@ It doesn't matter if you use a router in transport or it is installed in your te
           STOP = {"SOME_COMMAND", "DEVICE_AT_COMMAND_TO_STOP"}
       },
       MY_DEVICE_WITHOUT_COMMAND = {
-          START = '-',
-          STOP = '-'
+          START = {'-'},
+          STOP = {'-'}
       }
   ```
 
