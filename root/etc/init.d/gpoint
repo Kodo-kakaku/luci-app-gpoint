@@ -21,10 +21,13 @@ start_service() {
 
 stop_service() {
     if [ -f /var/run/gpoint.pid ]; then
+        /usr/share/gpoint/gpoint stop
         sessionId=$(uci get gpoint.service_settings.sessionid)
         uci set gpoint.service_settings.sessionid=stop
         uci commit gpoint
-        ubus call session destroy "{\"ubus_rpc_session\":\"${sessionId}\"}"
+        if [ "$sessionId" != "stop" ] && [ -n "$sessionId" ]; then
+            ubus call session destroy "{\"ubus_rpc_session\":\"${sessionId}\"}"
+        fi
         echo "gpoint service stop"
    else
 	echo "gpoint not running"
