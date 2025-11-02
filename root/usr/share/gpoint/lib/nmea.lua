@@ -2,7 +2,7 @@
 -- This module is designed to extract data from NMEA messages. 
 -- All data is combined into a table "GnssData".
 -------------------------------------------------------------
--- Copyright 2021-2026 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2025 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local uci = require("luci.model.uci")
