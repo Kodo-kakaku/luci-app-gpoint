@@ -431,12 +431,12 @@ local function sendModemATCommand(port, commands, msg)
     return error, resp
 end
 
-function gpsd.startGNSS(port, commands)
+function nmea.startGNSS(port, commands)
     local msg = "GOOD!"
     return sendModemATCommand(port, commands, msg)
 end
 
-function gpsd.stopGNSS(port, commands)
+function nmea.stopGNSS(port, commands)
     local msg = "Stop command not required"
     return sendModemATCommand(port, commands, msg)
 end
