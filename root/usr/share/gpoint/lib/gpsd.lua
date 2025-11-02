@@ -132,7 +132,7 @@ function gpsd.getAllData(modemConfig)
     return GnssData
 end
 
-function nmea.startGNSS(port, commands)
+local function sendModemATCommand(port, commands, msg)
     local p = tonumber(string.sub(port, #port))
     p = p > 2 and p - 1 or p + 1
     p = string.gsub(port, '%d', tostring(p))
@@ -164,9 +164,19 @@ function nmea.startGNSS(port, commands)
             end
         end
     else
-        error, resp = false, { warning = { app = { false, "GOOD!" }, locator = {}, server = {} } }
+        error, resp = false, { warning = { app = { false, msg or "Command not required" }, locator = {}, server = {} } }
     end
     return error, resp
+end
+
+function gpsd.startGNSS(port, commands)
+    local msg = "GOOD!"
+    return sendModemATCommand(port, commands, msg)
+end
+
+function gpsd.stopGNSS(port, commands)
+    local msg = "Stop command not required"
+    return sendModemATCommand(port, commands, msg)
 end
 
 return gpsd
