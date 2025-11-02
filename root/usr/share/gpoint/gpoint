@@ -2,7 +2,7 @@
 -------------------------------------------------------------
 -- luci-app-gpoint. Gnss information dashboard for 3G/LTE dongle.
 -------------------------------------------------------------
--- Copyright 2021-2023 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2025 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 common_path = "/usr/share/gpoint/modems/?.lua;/usr/share/gpoint/lib/?.lua;/usr/share/gpoint/proto/?.lua;/usr/share/gpoint/lib/kalman_filter/?.lua;"
