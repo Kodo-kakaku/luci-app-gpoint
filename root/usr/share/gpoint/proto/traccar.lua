@@ -16,7 +16,7 @@ local function OsmAnd(GnssData, serverConfig, optionalParams)
 									serverConfig.address, serverConfig.port, serverConfig.login,
 									GnssData.gp.latitude  or '-', GnssData.gp.longitude or '-',
 									unix                  or '-', GnssData.gp.hdop      or '-',
-									GnssData.gp.altitude  or '-', GnssData.gp.spkm      or '-',
+									GnssData.gp.altitude  or '-', GnssData.gp.knots     or '-',
 									GnssData.gp.nsat      or '-')
 
 	for _,param in pairs(optionalParams) do
