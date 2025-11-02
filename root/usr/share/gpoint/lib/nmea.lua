@@ -289,6 +289,7 @@ local function getGPoint(GnssData, resp)
         hdop = '-',
         cog = '-',
         spkm = '-',
+        knots = '-',
         unix = '-'
     }
 
@@ -314,6 +315,7 @@ local function getGPoint(GnssData, resp)
     if not GnssData.warning.vtg[1] then
         GnssData.gp.cog = GnssData.vtg.course_t
         GnssData.gp.spkm = GnssData.vtg.speed
+        GnssData.gp.knots = GnssData.vtg.knots
     else
         err[2] = err[2] .. "VTG: " .. GnssData.warning.vtg[2] .. ' '
     end
@@ -325,6 +327,10 @@ local function getGPoint(GnssData, resp)
         GnssData.gp.utc = string.format("%s:%s", addZero(dateTime.hour), addZero(dateTime.min))
         GnssData.gp.date = string.format("%s.%s.%d", addZero(dateTime.day), addZero(dateTime.month), dateTime.year)
         GnssData.gp.unix = unixTime
+        
+        if GnssData.gp.knots == '-' then
+            GnssData.gp.knots = GnssData.rmc.knots
+        end
     else
         err[2] = err[2] .. "RMC: " .. GnssData.warning.rmc[2]
     end
