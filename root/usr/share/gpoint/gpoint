@@ -14,6 +14,8 @@ local nixio = require("nixio.fs")
 local ubus = require("ubus")
 local uci = require("luci.model.uci")
 
+local command = arg[1] or "start"
+
 function portActive(port)
     local fport = nixio.glob("/dev/tty[A-Z][A-Z]*")
     for p in fport do
@@ -35,6 +37,30 @@ end
 --------------------------------------------------------------------------------
 local gnssParser = ""
 local modemStatus, modemConfig = config.getModemData()
+
+-- Stop Gpoint service
+if command == "stop" then
+    if not modemStatus[1] then
+        local gpsd = uci:get_all("gpsd")
+        if modemConfig.mode == "nmea" then
+            gnssParser = require("nmea")
+        else
+            gnssParser = require("gpsd")
+        end
+        gnssParser.stopGNSS(modemConfig.port, modemConfig.stop)
+    end
+    local conn = ubus.connect()
+    if conn then
+        local sessionId = uci:get("gpoint", "service_settings", "sessionid")
+        if sessionId and sessionId ~= "stop" then
+            conn:call("session", "destroy", { ubus_rpc_session = sessionId })
+        end
+        conn:close()
+    end
+    os.exit(0)
+end
+
+-- Start Gpoint service
 if not modemStatus[1] then
     local gpsd = uci:get_all("gpsd")
     if modemConfig.mode == "nmea" then
