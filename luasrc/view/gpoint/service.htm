@@ -1,6 +1,6 @@
 <%#
 Module for providing data from a mobile satellite navigation system ( mobile modems, etc.)
--= Design and Development 2021-2023 =-
+-= Design and Development 2021-2025 =-
 Licensed to the public under the Apache License 2.0.
 -%>
 <script type="text/javascript">
@@ -30,6 +30,10 @@ Licensed to the public under the Apache License 2.0.
     btn_spinner = document.getElementById("btn_disable_spinner");
     break;
   }
+  
+  var wasEnabled = btn_enable.disabled; 
+  var wasRunning = btn_start.disabled && !btn_stop.disabled;
+  
   btn_start.disabled = true;
   btn_action.disabled = true;
   btn_stop.disabled = true;
@@ -41,13 +45,44 @@ Licensed to the public under the Apache License 2.0.
            if (!x) {
             return;
            }
-           btn_start.disabled = false;
-           btn_action.disabled = false;
-           btn_stop.disabled = false;
-           btn_enable.disabled = false;
-           btn_disable.disabled = false;
            spinner(btn_spinner, 0);
-           location.reload();
+           
+           // Determine new state after action
+           var serviceEnabled = wasEnabled;
+           var serviceRunning = wasRunning;
+           
+           if (action.name === "start") {
+               serviceRunning = true;
+           } else if (action.name === "stop") {
+               serviceRunning = false;
+           } else if (action.name === "enable") {
+               serviceEnabled = true;
+               serviceRunning = false; 
+           } else if (action.name === "disable") {
+               serviceEnabled = false;
+               serviceRunning = false;
+           }
+  
+           if (serviceEnabled) {
+               btn_enable.disabled = true;
+               btn_disable.disabled = false;
+               
+               if (serviceRunning) {
+                   btn_start.disabled = true;
+                   btn_action.disabled = false;
+                   btn_stop.disabled = false;
+               } else {
+                   btn_start.disabled = false;
+                   btn_action.disabled = true;
+                   btn_stop.disabled = true;
+               }
+           } else {
+               btn_enable.disabled = false;
+               btn_disable.disabled = true;
+               btn_start.disabled = true;
+               btn_action.disabled = true;
+               btn_stop.disabled = true;
+           }
           });
  }
  function spinner(element, state) {
