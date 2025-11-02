@@ -1,7 +1,7 @@
 -------------------------------------------------------------
 -- luci-app-gpoint. Gnss information dashboard for 3G/LTE dongle.
 -------------------------------------------------------------
--- Copyright 2021-2026 Vladislav Kadulin <spanky@yandex.ru>
+-- Copyright 2021-2025 Vladislav Kadulin <spanky@yandex.ru>
 -- Licensed to the GNU General Public License v3.0
 
 local socket = require("socket")
