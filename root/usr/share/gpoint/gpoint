@@ -33,7 +33,7 @@ end
 
 --------------------------------------------------------------------------------
 -- all warnings: [1]-true/false, [2]-what err
--- initializing modem
+-- initializing modem (start/stop service)
 --------------------------------------------------------------------------------
 local gnssParser = ""
 local modemStatus, modemConfig = config.getModemData()
