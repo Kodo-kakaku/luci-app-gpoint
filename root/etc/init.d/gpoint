@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-# Copyright 2021-2022 Vladislav Kadulin {spanky@yandex.ru}
+# Copyright 2021-2025 Vladislav Kadulin {spanky@yandex.ru}
 
 USE_PROCD=1
 START=95
