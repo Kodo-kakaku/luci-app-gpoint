@@ -20,16 +20,32 @@ start_service() {
 }
 
 stop_service() {
-    if [ -f /var/run/gpoint.pid ]; then
-        /usr/share/gpoint/gpoint stop
-        sessionId=$(uci get gpoint.service_settings.sessionid)
+    sessionId=$(uci get gpoint.service_settings.sessionid 2>/dev/null || echo "")
+    if [ -n "$sessionId" ] && [ "$sessionId" != "stop" ]; then
+        ubus call session destroy "{\"ubus_rpc_session\":\"${sessionId}\"}" 2>/dev/null || true
         uci set gpoint.service_settings.sessionid=stop
-        uci commit gpoint
-        if [ "$sessionId" != "stop" ] && [ -n "$sessionId" ]; then
-            ubus call session destroy "{\"ubus_rpc_session\":\"${sessionId}\"}"
+        uci commit gpoint 2>/dev/null || true
+    fi
+
+    PID=""
+    if [ -f /var/run/gpoint.pid ]; then
+        PID=$(cat /var/run/gpoint.pid 2>/dev/null || echo "")
+    fi
+    
+    if [ -n "$PID" ] && kill -0 "$PID" 2>/dev/null; then
+        timeout=5
+        count=0
+        while kill -0 "$PID" 2>/dev/null && [ $count -lt $timeout ]; do
+            sleep 1
+            count=$((count + 1))
+        done
+
+        if kill -0 "$PID" 2>/dev/null; then
+            kill -9 "$PID" 2>/dev/null || true
+            sleep 1
         fi
-        echo "gpoint service stop"
-   else
-	echo "gpoint not running"
-   fi
+    fi
+
+    /usr/share/gpoint/gpoint stop >/dev/null 2>&1 || true
+    echo "gpoint service stop"
 }
