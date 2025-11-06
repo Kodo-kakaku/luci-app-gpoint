@@ -48,7 +48,11 @@ end
 local function findInResp(data, begin)
     local err = true
     local b = string.find(data, begin)
-    local e = string.find(data, "\r\n", b)
+    local e = string.find(data, "\r", b)
+    local e2 = string.find(data, "\n", b)
+    if (e and e2 and e2 < e) or (e == nil) then
+        e = e2
+    end
 
     if b and e then
         err = false
