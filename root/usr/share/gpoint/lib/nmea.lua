@@ -44,22 +44,32 @@ local function nmeaCoordinatesToDouble(coord, quadrant)
     return coord_deg
 end
 
---We are looking for the desired data line in the line received from the device
+-- We are looking for the desired data line in the line received from the device
+-- Refactoring: 
+-- Line ending search priority:
+--   1. \r\n (Windows line ending) - highest priority
+--   2. \n (Unix line ending)
+--   3. \r (old Mac line ending)
 local function findInResp(data, begin)
-    local err = true
     local b = string.find(data, begin)
-    local e = string.find(data, "\r", b)
-    local e2 = string.find(data, "\n", b)
-    if (e and e2 and e2 < e) or (e == nil) then
-        e = e2
+    if not b then
+        return true, nil, nil
     end
-
-    if b and e then
-        err = false
+    
+    local e = string.find(data, "\r\n", b)
+    if not e then
+        e = string.find(data, "\n", b)
+    end
+    
+    if not e then
+        e = string.find(data, "\r", b)
+    end
+    
+    if e then
+        return false, b, e
     else
-        b, e = nil, nil
+        return true, nil, nil
     end
-    return err, b, e
 end
 
 -- message parsing, checksum checking
