@@ -107,7 +107,7 @@ Thank you for your interest in the project!
 # # Upload ipk file to tmp folder
 # cd /tmp
 # opkg update
-# opkg install luci-app-gpoint_2.7.7_all.ipk
+# opkg install luci-app-gpoint_2.7.8_all.ipk
 ```
 
 ## Uninstall
