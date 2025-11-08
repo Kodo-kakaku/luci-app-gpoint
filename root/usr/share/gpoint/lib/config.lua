@@ -65,6 +65,10 @@ local MODEM = {
     UBLOX = {
         START = {"-"},
         STOP = {"-"}    
+    },
+    USB_UART = {
+        START = {"-"},
+        STOP = {"-"}
     }
 }
 
@@ -117,6 +121,9 @@ function config.getModemData()
         elseif string.find(CFG.modem_settings.modem, "Dell") then
             modem.start = MODEM.DELL.START
             modem.stop = MODEM.DELL.STOP
+        elseif string.find(CFG.modem_settings.modem, "USB-UART") then
+            modem.start = MODEM.USB_UART.START
+            modem.stop = MODEM.USB_UART.STOP
         end
         modem.name = CFG.modem_settings.modem
         modem.port = CFG.modem_settings.port
