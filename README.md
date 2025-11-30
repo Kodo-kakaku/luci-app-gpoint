@@ -30,13 +30,16 @@ It doesn't matter if you use a router in transport or it is installed in your te
 
 ## Supported devices
 
+### Modems:
 - Dell DW5821e/DW5829e/DW5829e-eSIM
 - Huawei ME909u-521
 - MEIGLink SLM820/SLM828
 - Quectel EC21/EC25/EP06/EM060K/EM12/EM160R/RM500Q/RM520N
 - Sierra EM7455/EM7565
 - Simcom SIM7600E-H
+### Other device:
 - U-Blox VK-172 GPS/GLONASS module (u-blox 7 GNSS modules)
+- USB-UART like CP210x/CH341
 
 ## Supported GNSS protocols
 
