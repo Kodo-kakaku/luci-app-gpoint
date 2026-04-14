@@ -111,12 +111,17 @@ Thank you for your interest in the project!
 # cd /tmp
 # opkg update
 # opkg install luci-app-gpoint_2.8.0_all.ipk
+
+# Since version OpenWrt 24+ upload apk file to tmp folder
+# cd /tmp
+# apk add --allow-untrusted ./luci-app-gpoint-2.8.0-r1.apk
 ```
 
 ## Uninstall
 
 ```console
 # opkg remove luci-app-gpoint
+# apk del luci-app-gpoint
 ```
 
 ## LICENSE
